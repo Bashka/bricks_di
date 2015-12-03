@@ -1,10 +1,10 @@
 <?php
-namespace Bricks\ServiceLocator;
+namespace Bricks\Di;
 
 /**
  * Минималистичная реализация локатора служб для тестирования Di.
  */
-class Manager{
+class Services implements \ArrayAccess{
   private $services = [];
 
   public function set($name, $service){
@@ -16,5 +16,19 @@ class Manager{
       return null;
     }
     return $this->services[$name];
+  }
+
+  public function offsetExists($offset){
+  }
+
+  public function offsetGet($offset){
+    return $this->get($offset);
+  }
+
+  public function offsetSet($offset, $value){
+    $this->set($offset, $value);
+  }
+
+  public function offsetUnset($offset){
   }
 }

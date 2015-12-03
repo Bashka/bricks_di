@@ -1,11 +1,15 @@
 # Инъекция зависимостей
 
-Класс _Manager_ расширяет логику локатора служб, добавляя механизм разрешения 
-зависимостей конструктора класса при его инстанциации, или метода объекта при 
-его вызове. В этих случаях зависимостями являются аргументы методов. Имена 
-аргументов используются для поиска сервиса в локаторе служб, который и будет 
-передан в качестве параметра методу. Если же сервис отсутствует, будет передан 
-`null`.
+Класс _Manager_ реализует механизм разрешения зависимостей конструктора класса 
+при его инстанциации, или метода объекта при его вызове. В этих случаях 
+зависимостями являются аргументы методов. Имена аргументов используются для 
+поиска сервиса в локаторе служб, который (сервис) и будет передан в качестве 
+параметра методу. Если же сервис отсутствует, будет передан `null`.
+
+При инстанциации данного класса, конструктору необходимо передать массив 
+сервисов или экземпляр класса, реализующего интерфейс _ArrayAccess_ стандартной 
+библиотеки классов PHP. К примеру, это может быть экземпляр класса 
+`Bricks\ServiceLocator\Manager`.
 
 ## Зависимости при инстанциации
 
@@ -15,6 +19,7 @@
 
 ```php
 use Bricks\Di\Manager;
+use Bricks\ServiceLocator\Manager as Services;
 
 class MyClass{
   public function __construct($service){
@@ -22,9 +27,11 @@ class MyClass{
   }
 }
 
-$manager = new Manager;
-$manager->set('service', new Service);
-// Конструктору будет передан объект из $manager->get('service').
+$services = new Services;
+$services->set('service', new Service);
+
+$manager = new Manager($services);
+// Конструктору будет передан объект из $services->get('service').
 $obj = $manager->constructInjection('MyClass');
 ```
 
@@ -37,6 +44,7 @@ $obj = $manager->constructInjection('MyClass');
 
 ```php
 use Bricks\Di\Manager;
+use Bricks\ServiceLocator\Manager as Services;
 
 class MyClass{
   public function method($service){
@@ -45,10 +53,12 @@ class MyClass{
   }
 }
 
-$manager = new Manager;
-$manager->set('service', new Service);
+$services = new Services;
+$services->set('service', new Service);
+
+$manager = new Manager($services);
 $obj = new MyClass;
-// Методу будет передан объект из $manager->get('service').
+// Методу будет передан объект из $services->get('service').
 $result = $manager->methodInjection($obj, 'method');
 var_dump($result); // 'Hello world'
 ```
@@ -63,6 +73,7 @@ var_dump($result); // 'Hello world'
 
 ```php
 use Bricks\Di\Manager;
+use Bricks\ServiceLocator\Manager as Services;
 
 class MyClass{
   public function method($data, $service){
@@ -73,6 +84,7 @@ class MyClass{
 $manager = new Manager;
 $manager->set('service', new Service);
 
+$manager = new Manager($services);
 $dependency = $manager->buildDependency('MyClass', 'method');
 var_dump($dependency); // [null, new Service]
 $dependency[0] = 'data'; // Добавление данных.

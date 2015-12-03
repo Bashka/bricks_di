@@ -1,13 +1,28 @@
 <?php
 namespace Bricks\Di;
-use Bricks\ServiceLocator;
 
 /**
- * Реализует механизм внедрения зависимостей на базе локатора служб.
+ * Реализация механизм внедрения зависимостей.
  *
  * @author Artur Sh. Mamedbekov
  */
-class Manager extends ServiceLocator\Manager{
+class Manager{
+  /**
+   * @var array|\ArrayAccess Доступные сервисы.
+   */
+  private $services;
+
+  /**
+   * @param array|\ArrayAccess $services Доступные сервисы.
+   */
+  public function __construct($services){
+    if(!(is_array($services) || $services instanceof \ArrayAccess)){
+      throw new InvalidArgumentException('Expected array or ArrayAccess');
+    }
+
+		$this->services = $services;
+  }
+
   /**
    * Формирует список зависимостей метода.
    *
@@ -22,7 +37,7 @@ class Manager extends ServiceLocator\Manager{
     $params = (new \ReflectionMethod($class, $method))->getParameters();
     $dependency = [];
     foreach($params as $param){
-      array_push($dependency, $this->get($param->getName()));
+      array_push($dependency, $this->services[$param->getName()]);
     }
 
     return $dependency;

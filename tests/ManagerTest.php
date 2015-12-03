@@ -1,6 +1,6 @@
 <?php
 namespace Bricks\Di;
-require_once('tests/ServiceLocatorManager.php');
+require_once('tests/Services.php');
 require_once('Manager.php');
 require_once('tests/Object.php');
 
@@ -14,9 +14,11 @@ class ManagerTest extends \PHPUnit_Framework_TestCase{
 	private $manager;
 
 	public function setUp(){
-    $this->manager = new Manager;
-    $this->manager->set('depA', 'a');
-    $this->manager->set('depB', 'b');
+    $services = new Services;
+    $services->set('depA', 'a');
+    $services->set('depB', 'b');
+
+    $this->manager = new Manager($services);
   }
 
   /**
