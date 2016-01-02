@@ -1,6 +1,6 @@
 {
     "name": "bashka/bricks_di",
-    "version": "1.2",
+    "version": "1.3",
     "description": "Механизм внедрения зависимостей",
     "license": "GNU-3.0",
     "authors": [

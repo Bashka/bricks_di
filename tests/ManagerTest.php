@@ -3,6 +3,7 @@ namespace Bricks\Di;
 require_once('tests/Services.php');
 require_once('Manager.php');
 require_once('tests/Object.php');
+require_once('tests/NoConstructor.php');
 
 /**
  * @author Artur Sh. Mamedbekov
@@ -37,11 +38,26 @@ class ManagerTest extends \PHPUnit_Framework_TestCase{
   }
 
   /**
+   * Должен возвращать пустой массив, если целевой метод отсутствует.
+   */
+  public function testBuildDependency_shouldReturnEmptyArrayIfMethodNotExists(){
+    $this->assertEquals([], $this->manager->buildDependency('Bricks\Di\NoConstructor', '__construct'));
+  }
+
+  /**
    * Должен инстанциировать класс разрешая зависимости конструктора.
    */
   public function testConstructInjection(){
     $obj = $this->manager->constructInjection('Bricks\Di\Object');
     $this->assertEquals('a', $obj->depA);
+  }
+
+  /**
+   * Должен создавать объект, если конструктор отсутствует.
+   */
+  public function testConstructInjection_shouldCreateObject(){
+    $obj = $this->manager->constructInjection('Bricks\Di\NoConstructor');
+    $this->assertTrue($obj instanceof NoConstructor);
   }
 
   /**

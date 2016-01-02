@@ -34,6 +34,10 @@ class Manager{
    * @return array Список зависимостей целевого метода.
    */
   public function buildDependency($class, $method){
+    if(!method_exists($class, $method)){
+      return [];
+    }
+
     $params = (new \ReflectionMethod($class, $method))->getParameters();
     $dependency = [];
     foreach($params as $param){
