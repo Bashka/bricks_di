@@ -19,6 +19,7 @@ class Services implements \ArrayAccess{
   }
 
   public function offsetExists($offset){
+    return isset($this->services[$offset]);
   }
 
   public function offsetGet($offset){

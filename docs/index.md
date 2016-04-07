@@ -2,8 +2,8 @@
 
 Класс _Manager_ реализует механизм разрешения зависимостей конструктора класса 
 при его инстанциации, или метода объекта при его вызове. В этих случаях 
-зависимостями являются аргументы методов. Имена аргументов используются для 
-поиска сервиса в локаторе служб, который (сервис) и будет передан в качестве 
+зависимостями являются аргументы методов. Имена и типы аргументов используются 
+для поиска сервиса в локаторе служб, который (сервис) и будет передан в качестве 
 параметра методу. Если же сервис отсутствует, будет передан `null`.
 
 При инстанциации данного класса, конструктору необходимо передать массив 
@@ -91,4 +91,54 @@ $dependency[0] = 'data'; // Добавление данных.
 
 $obj = new MyClass;
 $result = call_user_func_array([$obj, 'method'], $dependency); // Вызов метода.
+```
+
+## Проверка типа
+
+Если метод принимает данные определенного типа, менеджер может использовать его 
+для разрешения зависимостей:
+
+```php
+use Bricks\Di\Manager;
+use Bricks\ServiceLocator\Manager as Services;
+use My\Library\Database as Db;
+
+class MyClass{
+  public function method(Db $db){
+    ...
+  }
+}
+
+$services = new Services;
+$services->set(Db::class, new Db(...));
+
+$manager = new Manager($services);
+$obj = new MyClass;
+// Методу будет передан объект из $services->get('My\Library\Database').
+$manager->methodInjection($obj, 'method');
+```
+
+Важно помнить, что разрешение зависимости на основе типа выполняется только в 
+том случае, если менеджеру не удалось разрешить зависимость на основе имени 
+параметра:
+
+```php
+use Bricks\Di\Manager;
+use Bricks\ServiceLocator\Manager as Services;
+use My\Library\Database as Db;
+
+class MyClass{
+  public function method(Db $db){
+    ...
+  }
+}
+
+$services = new Services;
+$services->set(Db::class, new Db(...));
+$services->set('db', ...);
+
+$manager = new Manager($services);
+$obj = new MyClass;
+// Методу будет передан объект из $services->get('db').
+$manager->methodInjection($obj, 'method');
 ```

@@ -8,6 +8,8 @@ class Object{
 
   public $depC;
 
+  public $depD;
+
   public function __construct($depA){
     $this->depA = $depA;
   }
@@ -18,5 +20,9 @@ class Object{
 
   public function methodB($depC){
     $this->depC = $depC;
+  }
+
+  public function methodC(\Exception $depD){
+    $this->depD = $depD;
   }
 }

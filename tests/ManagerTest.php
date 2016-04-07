@@ -18,6 +18,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase{
     $services = new Services;
     $services->set('depA', 'a');
     $services->set('depB', 'b');
+    $services->set('Exception', new \Exception);
 
     $this->manager = new Manager($services);
   }
@@ -28,6 +29,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase{
   public function testBuildDependency(){
     $this->assertEquals(['a'], $this->manager->buildDependency('Bricks\Di\Object', '__construct'));
     $this->assertEquals(['b'], $this->manager->buildDependency('Bricks\Di\Object', 'methodA'));
+    $this->assertEquals([new \Exception], $this->manager->buildDependency('Bricks\Di\Object', 'methodC'));
   }
 
   /**
@@ -67,5 +69,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase{
     $obj = new Object('test');
     $this->manager->methodInjection($obj, 'methodA');
     $this->assertEquals('b', $obj->depB);
+    $this->manager->methodInjection($obj, 'methodC');
+    $this->assertTrue($obj->depD instanceof \Exception);
   }
 }

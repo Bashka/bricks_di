@@ -41,7 +41,18 @@ class Manager{
     $params = (new \ReflectionMethod($class, $method))->getParameters();
     $dependency = [];
     foreach($params as $param){
-      array_push($dependency, $this->services[$param->getName()]);
+      if(isset($this->services[$param->getName()])){
+        array_push($dependency, $this->services[$param->getName()]);
+        continue;
+      }
+
+      $assertClass = $param->getClass();
+      if(!is_null($assertClass) && isset($this->services[$assertClass->name])){
+        array_push($dependency, $this->services[$assertClass->name]);
+        continue;
+      }
+
+      array_push($dependency, null);
     }
 
     return $dependency;
