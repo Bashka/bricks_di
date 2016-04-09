@@ -41,8 +41,8 @@ class Manager{
     $params = (new \ReflectionMethod($class, $method))->getParameters();
     $dependency = [];
     foreach($params as $param){
-      if(isset($this->services[$param->getName()])){
-        array_push($dependency, $this->services[$param->getName()]);
+      if(isset($this->services[$param->name])){
+        array_push($dependency, $this->services[$param->name]);
         continue;
       }
 
